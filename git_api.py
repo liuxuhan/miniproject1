@@ -9,12 +9,11 @@ REPO = 'linux'
 Days = ['Sunday', 'Monday', 'Tuesday',
         'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-print(len(sys.argv))
 if len(sys.argv) == 3:
     AUTHOR = sys.argv[1]
     REPO = sys.argv[2]
-    print('============The git repo is {} from {}============'.format(REPO, AUTHOR))
 
+print('============The git repo is {} from {}============'.format(REPO, AUTHOR))
 
 def create_folder():
     if os.path.isdir('data'):

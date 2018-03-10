@@ -1,4 +1,5 @@
 import requests
+from requests.auth import HTTPBasicAuth
 import json
 import csv
 import os
@@ -9,6 +10,7 @@ REPO = 'linux'
 Days = ['Sunday', 'Monday', 'Tuesday',
         'Wednesday', 'Thursday', 'Friday', 'Saturday']
 BASE_URL = 'https://api.github.com'
+
 
 if len(sys.argv) == 3:
     AUTHOR = sys.argv[1]
@@ -47,7 +49,7 @@ def weekly_commit():
 def commit_per_hour():
     url = '{}/repos/{}/{}/stats/punch_card'.format(BASE_URL,
         AUTHOR, REPO)
-    response = requests.get(url, verify=False).json()
+    response = requests.get(url, verify=False, auth=HTTPBasicAuth(USERNAME, PASSWORD)).json()
 
     # write to json file
     with open('data/commit_per_hour.json', 'w') as json_file:
@@ -65,7 +67,8 @@ def commit_per_hour():
 
 def repos_of_author():
     url = '{}/users/{}/repos'.format(BASE_URL,AUTHOR)
-    response = requests.get(url, verify=False).json()
+    # response = requests.get(url, verify=False).json()
+    response = requests.get(url, verify=False, auth=HTTPBasicAuth(USERNAME, PASSWORD)).json()
 
     # write to json file
     with open('data/{}.json'.format(AUTHOR), 'w') as json_file:
@@ -83,7 +86,8 @@ def repos_of_author():
 
 def language_by_author():
     url = '{}/users/{}/repos'.format(BASE_URL,AUTHOR)
-    response = requests.get(url, verify=False).json()
+    # response = requests.get(url, verify=False).json()
+    response = requests.get(url, verify=False, auth=HTTPBasicAuth(USERNAME, PASSWORD)).json()
     repos = []
     for index in range(len(response)):
         repos.append(response[index]['name'])
@@ -93,7 +97,8 @@ def language_by_author():
     csvwriter.writerow(['language', 'repo','bytes'])
     for current_repo in repos:
         url = '{}/repos/{}/{}/languages'.format(BASE_URL,AUTHOR,current_repo)
-        response = requests.get(url, verify=False).json()
+        response = requests.get(url, verify=False, auth=HTTPBasicAuth(USERNAME, PASSWORD)).json()
+        # response = requests.get(url, verify=False).json()
         data = open('data/languages.csv', 'a', newline='')
         for key, value in response.items():
             csvwriter.writerow([key, current_repo,value])

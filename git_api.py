@@ -8,6 +8,7 @@ AUTHOR = 'torvalds'
 REPO = 'linux'
 Days = ['Sunday', 'Monday', 'Tuesday',
         'Wednesday', 'Thursday', 'Friday', 'Saturday']
+BASE_URL = 'https://api.github.com'
 
 if len(sys.argv) == 3:
     AUTHOR = sys.argv[1]
@@ -24,12 +25,12 @@ def create_folder():
 
 
 def weekly_commit():
-    url = 'https://api.github.com/repos/{}/{}/stats/participation'.format(
+    url = '/repos/{}/{}/stats/participation'.format(BASE_URL,
         AUTHOR, REPO)
     response = requests.get(url, verify=False).json()
 
     # write to json file
-    with open('data/weekly_commit_52_week.txt', 'w') as json_file:
+    with open('data/weekly_commit_52_week.json', 'w') as json_file:
         json.dump(response, json_file)
 
     # write to CSV file
@@ -44,12 +45,12 @@ def weekly_commit():
 
 
 def commit_per_hour():
-    url = 'https://api.github.com/repos/{}/{}/stats/punch_card'.format(
+    url = '/repos/{}/{}/stats/punch_card'.format(BASE_URL,
         AUTHOR, REPO)
     response = requests.get(url, verify=False).json()
 
     # write to json file
-    with open('data/commit_per_hour.txt', 'w') as json_file:
+    with open('data/commit_per_hour.json', 'w') as json_file:
         json.dump(response, json_file)
 
     # write to CSV file
@@ -62,12 +63,12 @@ def commit_per_hour():
     data.close()
 
 
-def repos_of_auther():
-    url = 'https://api.github.com/users/{}/repos'.format(AUTHOR)
+def repos_of_author():
+    url = '{}/users/{}/repos'.format(BASE_URL,AUTHOR)
     response = requests.get(url, verify=False).json()
 
     # write to json file
-    with open('data/{}.txt'.format(AUTHOR), 'w') as json_file:
+    with open('data/{}.json'.format(AUTHOR), 'w') as json_file:
         json.dump(response, json_file)
 
     # write to CSV file
@@ -80,9 +81,28 @@ def repos_of_auther():
             [item['id'], item['name'], item['size'], item['language']])
     data.close()
 
+def language_by_author():
+    url = '{}/users/{}/repos'.format(BASE_URL,AUTHOR)
+    response = requests.get(url, verify=False).json()
+    repos = []
+    for index in range(len(response)):
+        repos.append(response[index]['name'])
+
+    data = open('data/languages.csv', 'w', newline='')
+    csvwriter = csv.writer(data)
+    csvwriter.writerow(['language', 'repo','bytes'])
+    for current_repo in repos:
+        url = '{}/repos/{}/{}/languages'.format(BASE_URL,AUTHOR,current_repo)
+        response = requests.get(url, verify=False).json()
+        data = open('data/languages.csv', 'a', newline='')
+        for key, value in response.items():
+            csvwriter.writerow([key, current_repo,value])
+        data.close()
+
 
 if __name__ == "__main__":
     create_folder()
     weekly_commit()
     commit_per_hour()
-    repos_of_auther()
+    repos_of_author()
+    language_by_author()

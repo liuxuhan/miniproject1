@@ -12,7 +12,7 @@ And second part is data visualization to display three charts.
 Install python 3 and requirements.
 
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Running the data extraction

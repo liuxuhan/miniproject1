@@ -25,7 +25,7 @@ def create_folder():
 
 
 def weekly_commit():
-    url = '/repos/{}/{}/stats/participation'.format(BASE_URL,
+    url = '{}/repos/{}/{}/stats/participation'.format(BASE_URL,
         AUTHOR, REPO)
     response = requests.get(url, verify=False).json()
 
@@ -45,7 +45,7 @@ def weekly_commit():
 
 
 def commit_per_hour():
-    url = '/repos/{}/{}/stats/punch_card'.format(BASE_URL,
+    url = '{}/repos/{}/{}/stats/punch_card'.format(BASE_URL,
         AUTHOR, REPO)
     response = requests.get(url, verify=False).json()
 
